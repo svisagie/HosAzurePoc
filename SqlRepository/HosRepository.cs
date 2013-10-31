@@ -9,11 +9,17 @@ using SqlRepository.Models;
 
 namespace SqlRepository
 {
-    class HosRepository: IHosRepository
+    public class HosRepository: IHosRepository
     {
+        private readonly string _connectionString;
+        public HosRepository(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         public List<DriverWorkstate> FindDriverWorkStates(int driverId)
         {
-            using (var hosDbContext = new HosDBContext())
+            using (var hosDbContext = new HosDBContext(_connectionString))
             {
                 return hosDbContext.DriverWorkstates.Where(dw => dw.DriverId == driverId).ToList();
             }
@@ -21,7 +27,7 @@ namespace SqlRepository
 
         public List<DriverWorkstate> FindDriverWorkStates(int driverId, DateTime from)
         {
-            using (var hosDbContext = new HosDBContext())
+            using (var hosDbContext = new HosDBContext(_connectionString))
             {
                 return
                     hosDbContext.DriverWorkstates.Where(dw => dw.DriverId == driverId && dw.Timestamp > from).ToList();
@@ -30,7 +36,7 @@ namespace SqlRepository
 
         public List<DriverWorkstate> FindDriverWorkStates(int driverId, DateTime from, DateTime to)
         {
-            using (var hosDbContext = new HosDBContext())
+            using (var hosDbContext = new HosDBContext(_connectionString))
             {
                 return
                     hosDbContext.DriverWorkstates.Where(
@@ -42,9 +48,9 @@ namespace SqlRepository
         {
             try
             {
-                using (var hosDbContext = new HosDBContext())
+                using (var hosDbContext = new HosDBContext(_connectionString))
                 {
-                    if (driverWorkstate.DriverWorkstateId != 0)
+                    if (driverWorkstate.DriverWorkStateId != 0)
                     {
                         hosDbContext.DriverWorkstates.Attach(driverWorkstate);
                         hosDbContext.Entry(driverWorkstate).State = EntityState.Modified;
@@ -66,7 +72,7 @@ namespace SqlRepository
 
         public DriverSummary FindDriverSummary(int driverId, int workstateId)
         {
-            using (var hosDbContext = new HosDBContext())
+            using (var hosDbContext = new HosDBContext(_connectionString))
             {
                 return
                     hosDbContext.DriverSummaries.FirstOrDefault(
@@ -78,7 +84,7 @@ namespace SqlRepository
         {
             try
             {
-                using (var hosDbContext = new HosDBContext())
+                using (var hosDbContext = new HosDBContext(_connectionString))
                 {
                     var tempDriverSummary =
                         hosDbContext.DriverSummaries.FirstOrDefault(

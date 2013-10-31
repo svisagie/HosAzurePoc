@@ -8,11 +8,10 @@ namespace SqlRepository.Models.Mapping
         public DriverWorkstateMap()
         {
             // Primary Key
-            this.HasKey(t => t.DriverId);
+            this.HasKey(t => t.DriverWorkStateId);
 
             // Properties
-            this.Property(t => t.DriverId)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+            this.Property(t => t.DriverId);
 
             // Table & Column Mappings
             this.ToTable("DriverWorkstates");

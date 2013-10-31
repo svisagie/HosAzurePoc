@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Newtonsoft.Json;
+using SqlRepository;
+using SqlRepository.Models;
 
 namespace HosIncommingService
 {
@@ -21,10 +22,12 @@ namespace HosIncommingService
 		QueueClient Client;
 		ManualResetEvent CompletedEvent = new ManualResetEvent(false);
 
+        private HosRepository _hosRepository = new HosRepository(CloudConfigurationManager.GetSetting("SqlDbConnectionString"));
+
 		public override void Run()
 		{
 			Trace.WriteLine("Starting processing of messages");
-
+            
 			// Initiates the message pump and callback is invoked for each message that is received, calling close on the client will stop the pump.
 			Client.OnMessage((receivedMessage) =>
 				 {
@@ -32,10 +35,20 @@ namespace HosIncommingService
 					 {
 						 // Process the message
 						 Trace.WriteLine("Processing Service Bus message: " + receivedMessage.SequenceNumber.ToString());
+					     var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(receivedMessage.GetBody<string>());
+					     try
+					     {
+					         _hosRepository.SaveDriverWorkstate(driverWorkstate);
+					     }
+					     catch (Exception exception)
+					     {
+					         receivedMessage.Abandon();
+					     }
+                         receivedMessage.Complete();
 					 }
-					 catch
+					 catch(Exception exception)
 					 {
-						 // Handle any message processing specific exceptions here
+						 receivedMessage.DeadLetter();
 					 }
 				 });
 
@@ -44,6 +57,11 @@ namespace HosIncommingService
 
 		public override bool OnStart()
 		{
+            if (!RoleEnvironment.IsAvailable || RoleEnvironment.IsEmulated)
+            {
+                ServiceBusEnvironment.SystemConnectivity.Mode = ConnectivityMode.Http;
+            }
+
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;
 

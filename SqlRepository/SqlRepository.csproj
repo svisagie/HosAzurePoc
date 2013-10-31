@@ -46,8 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstract\IHosRepository.cs" />
     <Compile Include="HosRepository.cs" />
+    <Compile Include="IHosRepository.cs" />
     <Compile Include="Models\C__RefactorLog.cs" />
     <Compile Include="Models\DriverSummary.cs" />
     <Compile Include="Models\DriverWorkstate.cs" />
