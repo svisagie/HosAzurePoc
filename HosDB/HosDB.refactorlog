@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="bd78bb4d-3117-4a33-981a-358181151a4f" ChangeDateTime="10/31/2013 07:57:23">
+    <Property Name="ElementName" Value="[dbo].[DriverWorkstates].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DriverWorkstates]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DriverId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7bf54400-4ebe-4ea9-be5b-ea08767a8ea2" ChangeDateTime="10/31/2013 07:57:59">
+    <Property Name="ElementName" Value="[dbo].[DriverSummaries].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DriverSummaries]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DriverId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="780ba302-19da-4d76-ab3f-078f1494c5a6" ChangeDateTime="10/31/2013 07:58:33">
+    <Property Name="ElementName" Value="[dbo].[DriverWorkstates].[WorkState]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DriverWorkstates]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="WorkStateId" />
+  </Operation>
+</Operations>

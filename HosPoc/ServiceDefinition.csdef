@@ -14,13 +14,17 @@
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+    <ConfigurationSettings>
+      <Setting name="SqlDbConnectionString" />
+    </ConfigurationSettings>
   </WebRole>
   <WorkerRole name="HosIncommingService" vmsize="Small">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
     <ConfigurationSettings>
-      <Setting name="Microsoft.ServiceBus.ConnectionString" />
+      <Setting name="SqlDbConnectionString" />
+      <Setting name="HosPocQueueNamespace" />
     </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="HosSummarisationService" vmsize="Small">
@@ -28,7 +32,8 @@
       <Import moduleName="Diagnostics" />
     </Imports>
     <ConfigurationSettings>
-      <Setting name="Microsoft.ServiceBus.ConnectionString" />
+      <Setting name="SqlDbConnectionString" />
+      <Setting name="HosPocQueueNamespace" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

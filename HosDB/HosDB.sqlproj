@@ -58,4 +58,11 @@
   <ItemGroup>
     <Folder Include="Properties" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="DriverWorkstates.sql" />
+    <Build Include="DriverSummaries.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="HosDB.refactorlog" />
+  </ItemGroup>
 </Project>

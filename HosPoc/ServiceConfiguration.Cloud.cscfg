@@ -4,20 +4,23 @@
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="SqlDbConnectionString" value="" />
     </ConfigurationSettings>
   </Role>
   <Role name="HosIncommingService">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
-      <Setting name="Microsoft.ServiceBus.ConnectionString" value="Endpoint=sb://[your namespace].servicebus.windows.net;SharedSecretIssuer=owner;SharedSecretValue=[your secret]" />
+      <Setting name="SqlDbConnectionString" value="" />
+      <Setting name="HosPocQueueNamespace" value="Data Source=AFSTBWS091;Initial Catalog=HosDB;Persist Security Info=True;User ID=sa;Password=password;MultipleActiveResultSets=True" />
     </ConfigurationSettings>
   </Role>
   <Role name="HosSummarisationService">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
-      <Setting name="Microsoft.ServiceBus.ConnectionString" value="Endpoint=sb://[your namespace].servicebus.windows.net;SharedSecretIssuer=owner;SharedSecretValue=[your secret]" />
+      <Setting name="SqlDbConnectionString" value="" />
+      <Setting name="HosPocQueueNamespace" value="Data Source=AFSTBWS091;Initial Catalog=HosDB;Persist Security Info=True;User ID=sa;Password=password;MultipleActiveResultSets=True" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>
