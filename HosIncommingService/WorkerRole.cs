@@ -14,7 +14,7 @@ namespace HosIncommingService
 	public class WorkerRole : RoleEntryPoint
 	{
 		// The name of your queue
-		const string QueueName = "ProcessingQueue";
+		const string QueueName = "hosworkstateincomming";
 
 		// QueueClient is thread-safe. Recommended that you cache 
 		// rather than recreating it on every request
@@ -48,7 +48,7 @@ namespace HosIncommingService
 			ServicePointManager.DefaultConnectionLimit = 12;
 
 			// Create the queue if it does not exist already
-			string connectionString = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.ConnectionString");
+			string connectionString = CloudConfigurationManager.GetSetting("HosPocQueueNamespace");
 			var namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
 			if (!namespaceManager.QueueExists(QueueName))
 			{
