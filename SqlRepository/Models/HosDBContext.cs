@@ -11,7 +11,7 @@ namespace SqlRepository.Models
 			Database.SetInitializer<HosDBContext>(null);
 		}
 
-		public HosDBContext(string connectionString)
+		public HosDBContext(string connectionString = "")
 			: base(connectionString)
 		{
 		}
