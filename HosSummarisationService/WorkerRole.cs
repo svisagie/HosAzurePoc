@@ -8,6 +8,9 @@ using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Newtonsoft.Json;
+using SqlRepository;
+using SqlRepository.Models;
 
 namespace HosSummarisationService
 {
@@ -21,6 +24,8 @@ namespace HosSummarisationService
 		QueueClient Client;
 		ManualResetEvent CompletedEvent = new ManualResetEvent(false);
 
+        private HosRepository _hosRepository = new HosRepository(CloudConfigurationManager.GetSetting("SqlDbConnectionString"));
+
 		public override void Run()
 		{
 			Trace.WriteLine("Starting processing of messages");
@@ -32,11 +37,37 @@ namespace HosSummarisationService
 					 {
 						 // Process the message
 						 Trace.WriteLine("Processing Service Bus message: " + receivedMessage.SequenceNumber.ToString());
+                         var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(receivedMessage.GetBody<string>());
+
+					     var driverSummary = _hosRepository.FindDriverSummary(driverWorkstate.DriverId,
+					         driverWorkstate.WorkStateId);
+
+					     if (driverSummary == null)
+					     {
+					         driverSummary = new DriverSummary();
+					         driverSummary.DriverId = driverWorkstate.DriverId;
+					         driverSummary.WorkStateId = driverWorkstate.WorkStateId;
+					         driverSummary.TotalSeconds = 0;
+					     }
+					     else
+					     {
+                             var lastDriverWorkstate = _hosRepository.LastDriverWorkStateBefore(driverWorkstate.DriverId,
+                             driverWorkstate.Timestamp);
+
+					         if (lastDriverWorkstate != null)
+					         {
+					             driverSummary.TotalSeconds += (long)(driverWorkstate.Timestamp - lastDriverWorkstate.Timestamp).TotalSeconds;
+					         }
+					     }
+
+					     _hosRepository.SaveDriverSummary(driverSummary);
+
+                         receivedMessage.Complete();
 					 }
-					 catch
-					 {
-						 // Handle any message processing specific exceptions here
-					 }
+                     catch (Exception exception)
+                     {
+                         receivedMessage.DeadLetter();
+                     }
 				 });
 
 			CompletedEvent.WaitOne();
@@ -44,6 +75,11 @@ namespace HosSummarisationService
 
 		public override bool OnStart()
 		{
+            if (!RoleEnvironment.IsAvailable || RoleEnvironment.IsEmulated)
+            {
+                ServiceBusEnvironment.SystemConnectivity.Mode = ConnectivityMode.Http;
+            }
+
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;
 
