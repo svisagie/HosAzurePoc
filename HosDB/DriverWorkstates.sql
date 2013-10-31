@@ -1,6 +1,8 @@
 ﻿CREATE TABLE [dbo].[DriverWorkstates]
 (
-	[DriverId] INT NOT NULL PRIMARY KEY, 
+    [DriverWorkStateId] BIGINT NOT NULL IDENTITY,
+	[DriverId] INT NOT NULL , 
     [WorkStateId] INT NOT NULL, 
-    [Timestamp] DATETIME NOT NULL
+    [Timestamp] DATETIME NOT NULL, 
+    PRIMARY KEY ([DriverWorkStateId]), 
 )

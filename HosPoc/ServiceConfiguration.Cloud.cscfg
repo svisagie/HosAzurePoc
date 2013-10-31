@@ -3,14 +3,14 @@
   <Role name="HosUI">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=hoscloudpoc;AccountKey=aw4MIlq/WYMap1i2Tbk1SJba55UzcwfUtOvoTxyx7MAnQOnH1Hr+8p3Hk18KNQtHLYzhGLiyZTLS7noC5uBu3w==" />
       <Setting name="SqlDbConnectionString" value="" />
     </ConfigurationSettings>
   </Role>
   <Role name="HosIncommingService">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=hoscloudpoc;AccountKey=aw4MIlq/WYMap1i2Tbk1SJba55UzcwfUtOvoTxyx7MAnQOnH1Hr+8p3Hk18KNQtHLYzhGLiyZTLS7noC5uBu3w==" />
       <Setting name="SqlDbConnectionString" value="" />
       <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Ll/YOkB6jzAy9YLsWZ2pDT94QFcVTwnHnX6mqaYe1Ko=" />
     </ConfigurationSettings>
@@ -18,7 +18,7 @@
   <Role name="HosSummarisationService">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=hoscloudpoc;AccountKey=aw4MIlq/WYMap1i2Tbk1SJba55UzcwfUtOvoTxyx7MAnQOnH1Hr+8p3Hk18KNQtHLYzhGLiyZTLS7noC5uBu3w==" />
       <Setting name="SqlDbConnectionString" value="" />
       <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Ll/YOkB6jzAy9YLsWZ2pDT94QFcVTwnHnX6mqaYe1Ko=" />
     </ConfigurationSettings>
