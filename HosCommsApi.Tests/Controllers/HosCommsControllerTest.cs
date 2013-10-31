@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Http;
 using HosCommsApi.Models;
 using HosCommsApi;
@@ -52,10 +53,10 @@ namespace HosCommsApi.Tests.Controllers
 			// Act
 			for (var i = 0; i < 5; i++)
 			{
-				var result = controller.WorkstatePost(1,
+				Task<string> result = controller.WorkstatePost(1,
 					new DriverWorkStateChange { DriverId = 1, WorkStateId = WorkStates.Driving, Timestamp = DateTime.UtcNow });
 
-				Assert.IsTrue(string.IsNullOrWhiteSpace(result));
+				Assert.IsTrue(string.IsNullOrWhiteSpace(result.Result));
 			}
 
 			// Assert
