@@ -18,5 +18,7 @@
     <AzureStorageAccountLabel>HosCloudPoc</AzureStorageAccountLabel>
     <AzureStorageAccountName>hoscloudpoc</AzureStorageAccountName>
     <AzureAppendTimestampToDeploymentLabel>True</AzureAppendTimestampToDeploymentLabel>
+    <EnableRemoteDebugger>True</EnableRemoteDebugger>
+    <RemoteDebuggerConnectorCertificateThumbprint>5EC39185C5DCD03616457CD5D86AEDCD8A71765C</RemoteDebuggerConnectorCertificateThumbprint>
   </PropertyGroup>
 </Project>
