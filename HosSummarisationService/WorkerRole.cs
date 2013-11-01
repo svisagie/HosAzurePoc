@@ -51,8 +51,10 @@ namespace HosSummarisationService
 					     }
 					     else
 					     {
-                             var lastDriverWorkstate = _hosRepository.LastDriverWorkStateBefore(driverWorkstate.DriverId,
-                             driverWorkstate.Timestamp);
+					         var lastDriverWorkstate = 
+                                 _hosRepository.LastDriverWorkStateBefore(driverWorkstate.DriverId,
+					             driverWorkstate.WorkStateId,
+					             driverWorkstate.Timestamp);
 
 					         if (lastDriverWorkstate != null)
 					         {

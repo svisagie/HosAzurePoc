@@ -44,14 +44,16 @@ namespace SqlRepository
             }
         }
 
-        public DriverWorkstate LastDriverWorkStateBefore(int driverId, DateTime before)
+        public DriverWorkstate LastDriverWorkStateBefore(int driverId, int workStateId, DateTime before)
         {
             using (var hosDbContext = new HosDBContext(_connectionString))
             {
                 return
                     hosDbContext
                     .DriverWorkstates
-                    .Where(dw => dw.DriverId == driverId && dw.Timestamp < before)
+                    .Where(dw => dw.DriverId == driverId 
+                        && dw.WorkStateId == workStateId
+                        && dw.Timestamp < before)
                     .OrderByDescending(dw => dw.Timestamp)
                     .FirstOrDefault();
             }
