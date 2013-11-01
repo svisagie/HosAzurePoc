@@ -98,6 +98,7 @@ namespace HosSummarisationService
 
 			// Initialize the connection to Service Bus Queue
 			_client = QueueClient.CreateFromConnectionString(connectionString, QueueName);
+			_client.PrefetchCount = int.Parse(CloudConfigurationManager.GetSetting("QueuePrefetchCount"));
 			return base.OnStart();
 		}
 
