@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LoadTesting", "LoadTesting"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadTestClient", "LoadTestClient\LoadTestClient.csproj", "{7D60DD1E-3D97-4992-85D9-BB0344626AD4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HosDriverService", "HosDriverService\HosDriverService.csproj", "{EAB7AD49-0D02-4207-A304-A89AF3B92CA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{7D60DD1E-3D97-4992-85D9-BB0344626AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D60DD1E-3D97-4992-85D9-BB0344626AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D60DD1E-3D97-4992-85D9-BB0344626AD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAB7AD49-0D02-4207-A304-A89AF3B92CA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAB7AD49-0D02-4207-A304-A89AF3B92CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAB7AD49-0D02-4207-A304-A89AF3B92CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAB7AD49-0D02-4207-A304-A89AF3B92CA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
