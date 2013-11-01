@@ -21,40 +21,42 @@ namespace HosIncommingService
 		// QueueClient is thread-safe. Recommended that you cache 
 		// rather than recreating it on every request
 		QueueClient _client, _summarisationClient;
-		ManualResetEvent CompletedEvent = new ManualResetEvent(false);
-
+	    private bool _run = true;
         private HosRepository _hosRepository = new HosRepository(CloudConfigurationManager.GetSetting("SqlDbConnectionString"));
 
 		public override void Run()
 		{
 			Trace.WriteLine("Starting processing of messages");
-            
-			// Initiates the message pump and callback is invoked for each message that is received, calling close on the client will stop the pump.
-			_client.OnMessage((receivedMessage) =>
-				 {
-					 try
-					 {
-						 // Process the message
-						 Trace.WriteLine("Processing Service Bus message: " + receivedMessage.SequenceNumber.ToString());
-					     var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(receivedMessage.GetBody<string>());
-					     try
-					     {
-					         driverWorkstate = _hosRepository.SaveDriverWorkstate(driverWorkstate);
-                             _summarisationClient.Send(new BrokeredMessage(JsonConvert.SerializeObject(driverWorkstate)));
-					     }
-					     catch (Exception exception)
-					     {
-					         receivedMessage.Abandon();
-					     }
-                         receivedMessage.Complete();
-					 }
-					 catch(Exception exception)
-					 {
-						 receivedMessage.DeadLetter();
-					 }
-				 });
 
-			CompletedEvent.WaitOne();
+		    while (_run)
+		    {
+                BrokeredMessage brokeredMessage = _client.Receive(TimeSpan.FromSeconds(10));
+		        if (brokeredMessage == null)
+		        {
+		            continue;
+		        }
+
+                try
+                {
+                    // Process the message
+                    Trace.WriteLine("Processing Service Bus message: " + brokeredMessage.SequenceNumber);
+                    var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(brokeredMessage.GetBody<string>());
+                    try
+                    {
+                        driverWorkstate = _hosRepository.SaveDriverWorkstate(driverWorkstate);
+                        _summarisationClient.Send(new BrokeredMessage(JsonConvert.SerializeObject(driverWorkstate)));
+                    }
+                    catch (Exception exception)
+                    {
+                        brokeredMessage.Abandon();
+                    }
+                    brokeredMessage.Complete();
+                }
+                catch (Exception exception)
+                {
+                    brokeredMessage.DeadLetter();
+                }
+		    }
 		}
 
 		public override bool OnStart()
@@ -87,9 +89,10 @@ namespace HosIncommingService
 
 		public override void OnStop()
 		{
+		    _run = false;
 			// Close the connection to Service Bus Queue
 			_client.Close();
-			CompletedEvent.Set();
+            _summarisationClient.Close();
 			base.OnStop();
 		}
 	}

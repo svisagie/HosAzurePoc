@@ -21,8 +21,8 @@ namespace HosSummarisationService
 
 		// QueueClient is thread-safe. Recommended that you cache 
 		// rather than recreating it on every request
-		QueueClient Client;
-		ManualResetEvent CompletedEvent = new ManualResetEvent(false);
+		QueueClient _client;
+        private bool _run = true;
 
         private HosRepository _hosRepository = new HosRepository(CloudConfigurationManager.GetSetting("SqlDbConnectionString"));
 
@@ -30,49 +30,52 @@ namespace HosSummarisationService
 		{
 			Trace.WriteLine("Starting processing of messages");
 
-			// Initiates the message pump and callback is invoked for each message that is received, calling close on the client will stop the pump.
-			Client.OnMessage((receivedMessage) =>
-				 {
-					 try
-					 {
-						 // Process the message
-						 Trace.WriteLine("Processing Service Bus message: " + receivedMessage.SequenceNumber.ToString());
-                         var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(receivedMessage.GetBody<string>());
+		    while (_run)
+		    {
+		        BrokeredMessage brokeredMessage = _client.Receive(TimeSpan.FromSeconds(10));
+		        if (brokeredMessage == null)
+		        {
+		            continue;
+		        }
 
-					     var driverSummary = _hosRepository.FindDriverSummary(driverWorkstate.DriverId,
-					         driverWorkstate.WorkStateId);
+                try
+                {
+                    // Process the message
+                    Trace.WriteLine("Processing Service Bus message: " + brokeredMessage.SequenceNumber.ToString());
+                    var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(brokeredMessage.GetBody<string>());
 
-					     if (driverSummary == null)
-					     {
-					         driverSummary = new DriverSummary();
-					         driverSummary.DriverId = driverWorkstate.DriverId;
-					         driverSummary.WorkStateId = driverWorkstate.WorkStateId;
-					         driverSummary.TotalSeconds = 0;
-					     }
-					     else
-					     {
-					         var lastDriverWorkstate = 
-                                 _hosRepository.LastDriverWorkStateBefore(driverWorkstate.DriverId,
-					             driverWorkstate.WorkStateId,
-					             driverWorkstate.Timestamp);
+                    var driverSummary = _hosRepository.FindDriverSummary(driverWorkstate.DriverId,
+                        driverWorkstate.WorkStateId);
 
-					         if (lastDriverWorkstate != null)
-					         {
-					             driverSummary.TotalSeconds += (long)(driverWorkstate.Timestamp - lastDriverWorkstate.Timestamp).TotalSeconds;
-					         }
-					     }
+                    if (driverSummary == null)
+                    {
+                        driverSummary = new DriverSummary();
+                        driverSummary.DriverId = driverWorkstate.DriverId;
+                        driverSummary.WorkStateId = driverWorkstate.WorkStateId;
+                        driverSummary.TotalSeconds = 0;
+                    }
+                    else
+                    {
+                        var lastDriverWorkstate =
+                            _hosRepository.LastDriverWorkStateBefore(driverWorkstate.DriverId,
+                            driverWorkstate.WorkStateId,
+                            driverWorkstate.Timestamp);
 
-					     _hosRepository.SaveDriverSummary(driverSummary);
+                        if (lastDriverWorkstate != null)
+                        {
+                            driverSummary.TotalSeconds += (long)(driverWorkstate.Timestamp - lastDriverWorkstate.Timestamp).TotalSeconds;
+                        }
+                    }
 
-                         receivedMessage.Complete();
-					 }
-                     catch (Exception exception)
-                     {
-                         receivedMessage.DeadLetter();
-                     }
-				 });
+                    _hosRepository.SaveDriverSummary(driverSummary);
 
-			CompletedEvent.WaitOne();
+                    brokeredMessage.Complete();
+                }
+                catch (Exception exception)
+                {
+                    brokeredMessage.DeadLetter();
+                }
+		    }
 		}
 
 		public override bool OnStart()
@@ -94,15 +97,15 @@ namespace HosSummarisationService
 			}
 
 			// Initialize the connection to Service Bus Queue
-			Client = QueueClient.CreateFromConnectionString(connectionString, QueueName);
+			_client = QueueClient.CreateFromConnectionString(connectionString, QueueName);
 			return base.OnStart();
 		}
 
 		public override void OnStop()
 		{
+		    _run = false;
 			// Close the connection to Service Bus Queue
-			Client.Close();
-			CompletedEvent.Set();
+			_client.Close();
 			base.OnStop();
 		}
 	}
