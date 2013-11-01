@@ -17,6 +17,42 @@ namespace SqlRepository
             _connectionString = connectionString;
         }
 
+        public List<DriverWorkstate> FindLatestDriverWorkStates(int numberOfWorkstates)
+        {
+            using (var hosDbContext = new HosDBContext(_connectionString))
+            {
+                return hosDbContext.DriverWorkstates.OrderByDescending(dw => dw.DriverWorkStateId).Take(numberOfWorkstates).ToList();
+            }
+        }
+
+        public List<DriverSummary> FindLatestDriverSummaries(int numberOfSummaries)
+        {
+            using (var hosDbContext = new HosDBContext(_connectionString))
+            {
+                return hosDbContext.DriverSummaries.OrderByDescending(dw => dw.DriverId).Take(numberOfSummaries).ToList();
+            }
+        }
+
+        public List<DriverSummary> FindDriverSummariesForDrivers(IEnumerable<int> driverIds)
+        {
+            using (var hosDbContext = new HosDBContext(_connectionString))
+            {
+                return hosDbContext.DriverSummaries
+                    .Where(ds => driverIds
+                        .Contains(ds.DriverId))
+                    .OrderBy(ds => ds.DriverId).ToList();
+            }
+        }
+
+        public List<DriverSummary> AllDriverSummariesForDrivers()
+        {
+            using (var hosDbContext = new HosDBContext(_connectionString))
+            {
+                return hosDbContext.DriverSummaries
+                    .OrderBy(ds => ds.DriverId).ToList();
+            }
+        }
+
         public List<DriverWorkstate> FindDriverWorkStates(int driverId)
         {
             using (var hosDbContext = new HosDBContext(_connectionString))
@@ -81,7 +117,7 @@ namespace SqlRepository
             }
             catch (Exception exception)
             {
-                return null;
+                throw exception;
             }
         }
 
@@ -103,7 +139,7 @@ namespace SqlRepository
                 {
                     var tempDriverSummary =
                         hosDbContext.DriverSummaries.FirstOrDefault(
-                            ds => ds.DriverId == driverSummary.DriverId && ds.WorkStateId == ds.WorkStateId);
+                            ds => ds.DriverId == driverSummary.DriverId && ds.WorkStateId == driverSummary.WorkStateId);
 
                     if (tempDriverSummary == null)
                     {
@@ -111,8 +147,7 @@ namespace SqlRepository
                     }
                     else
                     {
-                        hosDbContext.DriverSummaries.Attach(driverSummary);
-                        hosDbContext.Entry(driverSummary).State = EntityState.Modified;
+                        tempDriverSummary.TotalSeconds = driverSummary.TotalSeconds;
                     }
 
                     hosDbContext.SaveChanges();
@@ -121,7 +156,7 @@ namespace SqlRepository
             }
             catch (Exception exception)
             {
-                return null;
+                throw exception;
             }
         }
     }
