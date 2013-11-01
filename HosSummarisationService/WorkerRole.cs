@@ -32,8 +32,16 @@ namespace HosSummarisationService
 
 		    while (_run)
 		    {
-		        BrokeredMessage brokeredMessage = _client.Receive(TimeSpan.FromSeconds(10));
-		        if (brokeredMessage == null)
+		        BrokeredMessage brokeredMessage;
+		        try
+		        {
+                    brokeredMessage = _client.Receive(TimeSpan.FromSeconds(10));
+                    if (brokeredMessage == null)
+                    {
+                        continue;
+                    }
+		        }
+		        catch (Exception exception)
 		        {
 		            continue;
 		        }

@@ -1,0 +1,54 @@
+﻿@model HosUI.Models.Dashboard
+
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<h2>Dashboard</h2>
+
+<span class="inline">
+    <h3>Driver Work States</h3>
+    <table id="workStates">
+        <tr>
+            <th>DriverWorkStateId</th>
+            <th>DriverId</th>
+            <th>DriverName</th>
+            <th>WorkStateId</th>
+            <th>Timestamp</th>
+        </tr>
+        @foreach (var workstate in Model.Workstates)
+        {
+            <tr>
+                <td>@workstate.DriverWorkStateId</td>
+                <td>@workstate.DriverId</td>
+                <td>@workstate.DriverName</td>
+                <td>@workstate.WorkStateId</td>
+                <td>@workstate.Timestamp</td>
+            </tr>
+        }
+    </table>
+</span>
+
+<span class="inline">
+    <h3>Driver Summaries</h3>
+    <table id="summaries">
+        <tr>
+            <th>DriverId</th>
+            <th>DriverName</th>
+            <th>WorkStateId</th>
+            <th>Total Seconds</th>
+        </tr>
+        @foreach (var workstate in Model.Summaries)
+        {
+            <tr>
+                <td>@workstate.DriverId</td>
+                <td>@workstate.DriverName</td>
+                <td>@workstate.WorkStateId</td>
+                <td>@workstate.TotalSeconds</td>
+            </tr>
+        }
+    </table>
+</span>
+
+<script type="text/javascript" src="../../Scripts/app/app.js"></script>
+
