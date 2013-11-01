@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ConsoleSender
 {
@@ -12,17 +15,16 @@ namespace ConsoleSender
 		static readonly Random Rnd = new Random();
 		readonly static object ItemsLeftLock = new object();
 		private static int _itemsLeft = 0;
+		private static readonly Dictionary<string, long> Exceptions = new Dictionary<string, long>();
 
 		static void Main(string[] args)
 		{
 			_baseUri = ConfigurationManager.AppSettings["BaseUri"];
-
-			SetTurboMode();
-
 			Console.WriteLine("How many posts?");
 			var x = Console.ReadLine();
 			var count = 0;
-
+			var sw = new Stopwatch();
+			sw.Start();
 			if (int.TryParse(x, out count))
 			{
 				_itemsLeft = count;
@@ -30,12 +32,12 @@ namespace ConsoleSender
 				for (var i = 0; i < count; i++)
 				{
 					var actionId = i;
-					actions[i] = () => DoPost(actionId);
+					DoPost(actionId);
 				}
 
-				Console.WriteLine("Starting...");
-				var options = new ParallelOptions { MaxDegreeOfParallelism = 200 };
-				Parallel.Invoke(options, actions);
+				//Console.WriteLine("Starting...");
+				//var options = new ParallelOptions { MaxDegreeOfParallelism = 100 };
+				//Parallel.Invoke(options, actions);
 
 				while (_itemsLeft > 0) { }
 
@@ -45,7 +47,14 @@ namespace ConsoleSender
 			{
 				Console.WriteLine("That was not a number");
 			}
-			//Console.ReadLine();
+
+			sw.Stop();
+			Console.WriteLine("Took {0} seconds for {1} posts ({2}/sec)", sw.Elapsed.TotalSeconds, count, count / sw.Elapsed.TotalSeconds);
+			foreach (var exception in Exceptions)
+			{
+				Console.WriteLine("{0} = {1}", exception.Key, exception.Value);
+			}
+			Console.ReadLine();
 		}
 
 		private static async void DoPost(int id)
@@ -61,32 +70,29 @@ namespace ConsoleSender
 
 				client.BaseAddress = new Uri(_baseUri);
 				var resource = string.Format("/api/driver/{0}/workstate", stateChange.DriverId);
-				var result = await client.PostAsJsonAsync(resource, stateChange);
+				HttpResponseMessage result = null;
+				try
+				{
+					result = await PostAsJsonAsync(client, resource, stateChange);
+				}
+				catch (Exception ex)
+				{
+					if (!Exceptions.ContainsKey(ex.Message))
+						Exceptions[ex.Message] = 1;
+					else
+						Exceptions[ex.Message]++;
+				}
 
 				lock (ItemsLeftLock)
 					_itemsLeft--;
 
-				Console.WriteLine("{0}: DriverId {1} - {2}", id, stateChange.DriverId, result.StatusCode);
+				Console.WriteLine("{0}: DriverId {1} - {2}", id, stateChange.DriverId, (result != null ? result.StatusCode.ToString() : "Failed"));
 			}
 		}
 
-		private static void SetTurboMode()
+		private static async Task<HttpResponseMessage> PostAsJsonAsync(HttpClient client, string resource, DriverWorkStateChange stateChange)
 		{
-			int t, io;
-			ThreadPool.GetMaxThreads(out t, out io);
-			Debug("Default Max {0}, I/O: {1}", t, io);
-
-			var success = ThreadPool.SetMinThreads(t, io);
-			Debug("Successfully set Min {0}, I/O: {1}", t, io);
-		}
-
-		private static void Debug(string format, params object[] args)
-		{
-			System.Diagnostics.Debug.WriteLine(
-				 string.Format("{0} - Thead#{1} - {2}",
-					  DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss.fff"),
-					  Thread.CurrentThread.ManagedThreadId.ToString(),
-					  string.Format(format, args)));
+			return await client.PostAsJsonAsync(resource, stateChange);
 		}
 
 		internal class DriverWorkStateChange
