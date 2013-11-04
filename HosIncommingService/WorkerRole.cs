@@ -49,16 +49,21 @@ namespace HosIncommingService
                     // Process the message
                     Trace.WriteLine("Processing Service Bus message: " + brokeredMessage.SequenceNumber);
                     var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(brokeredMessage.GetBody<string>());
+                    if (driverWorkstate == null)
+                    {
+                        brokeredMessage.Complete();
+                        continue;
+                    }
                     try
                     {
                         driverWorkstate = _hosRepository.SaveDriverWorkstate(driverWorkstate);
                         _summarisationClient.Send(new BrokeredMessage(JsonConvert.SerializeObject(driverWorkstate)));
+                        brokeredMessage.Complete();
                     }
                     catch (Exception exception)
                     {
                         brokeredMessage.Abandon();
                     }
-                    brokeredMessage.Complete();
                 }
                 catch (Exception exception)
                 {
