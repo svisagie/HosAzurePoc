@@ -32,19 +32,16 @@ namespace HosUI.Controllers
 
         private string GetDriverName(IDriverChannel Channel, int DriverId)
         {
-            //using (IDriverChannel channel = channelFactory.CreateChannel())
-            //{
-                try
-                {
-                    return Channel.GetDriver(DriverId).DriverName;
-                }
-                catch (Exception e)
-                {
-                    //TODO: Write Trace error somewhere
-                    //Trace. Console.WriteLine("Error: {0}", e.Message);
-                }
-                return "";
-            //}
+            try
+            {
+                return Channel.GetDriver(DriverId).DriverName;
+            }
+            catch (Exception e)
+            {
+                //TODO: Write Trace error somewhere
+                //Trace. Console.WriteLine("Error: {0}", e.Message);
+            }
+            return "";
 
             //TODO: CLOSE FACTORY
             //channelFactory.Close();
