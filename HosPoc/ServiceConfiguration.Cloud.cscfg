@@ -5,6 +5,9 @@
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=hoscloudpoc;AccountKey=aw4MIlq/WYMap1i2Tbk1SJba55UzcwfUtOvoTxyx7MAnQOnH1Hr+8p3Hk18KNQtHLYzhGLiyZTLS7noC5uBu3w==" />
       <Setting name="SqlDbConnectionString" value="Server=tcp:xc254dsbip.database.windows.net,1433;Database=HosDB;User ID=HosDB@xc254dsbip;Password=P@ssw0rd1;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />
+      <Setting name="ServiceNamespace" value="hosdriver" />
+      <Setting name="IssuerName" value="owner" />
+      <Setting name="IssuerSecret" value="/oAh/9Zj4asxfWRkOELrN1lMOmyshNmrqINjxmNLzCc=" />
     </ConfigurationSettings>
   </Role>
   <Role name="HosIncommingService">

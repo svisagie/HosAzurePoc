@@ -16,6 +16,9 @@
     </Imports>
     <ConfigurationSettings>
       <Setting name="SqlDbConnectionString" />
+      <Setting name="ServiceNamespace" />
+      <Setting name="IssuerName" />
+      <Setting name="IssuerSecret" />
     </ConfigurationSettings>
   </WebRole>
   <WorkerRole name="HosIncommingService" vmsize="Small">

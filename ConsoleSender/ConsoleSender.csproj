@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LoadTestClient\LoadTestClient.csproj">
-      <Project>{7D60DD1E-3D97-4992-85D9-BB0344626AD4}</Project>
+      <Project>{7d60dd1e-3d97-4992-85d9-bb0344626ad4}</Project>
       <Name>LoadTestClient</Name>
     </ProjectReference>
   </ItemGroup>

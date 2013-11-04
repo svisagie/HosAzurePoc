@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using Microsoft.ServiceBus;
+using Microsoft.WindowsAzure;
 
 namespace HosDriverService
 {
@@ -59,16 +61,14 @@ namespace HosDriverService
     {
         static void Main(string[] args)
         {
-            Console.Write("Initialising the Service Bus ");
-
-            string serviceNamespace = "hospoc";
-            string issuerName = "owner";
-            string issuerSecret = "mEiPrhMsF+gtEuyAHXJvt9zwNH8OiFiuAI9j0W+qzbo=";
+            Console.Write("Initialising the Service Bus from Config ");
 
             TransportClientEndpointBehavior sharedSecretServicebusCredential = new TransportClientEndpointBehavior();
-            sharedSecretServicebusCredential.TokenProvider = TokenProvider.CreateSharedSecretTokenProvider(issuerName, issuerSecret);
+            sharedSecretServicebusCredential.TokenProvider = TokenProvider.CreateSharedSecretTokenProvider(
+                ConfigurationSettings.AppSettings["IssuerName"],
+                ConfigurationSettings.AppSettings["IssuerSecret"]);
 
-            Uri address = ServiceBusEnvironment.CreateServiceUri("sb", serviceNamespace, "DriverService");
+            Uri address = ServiceBusEnvironment.CreateServiceUri("sb", ConfigurationSettings.AppSettings["ServiceNamespace"], "DriverService");
 
             ServiceBusEnvironment.SystemConnectivity.Mode = ConnectivityMode.Http;
             ServiceHost host = new ServiceHost(typeof(DriverService), address);

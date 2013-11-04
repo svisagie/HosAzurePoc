@@ -5,6 +5,9 @@
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="SqlDbConnectionString" value="Data Source=AFSTBWS091;Initial Catalog=HosDB;Persist Security Info=True;User ID=sa;Password=password;MultipleActiveResultSets=True" />
+      <Setting name="ServiceNamespace" value="hosdriver" />
+      <Setting name="IssuerName" value="owner" />
+      <Setting name="IssuerSecret" value="/oAh/9Zj4asxfWRkOELrN1lMOmyshNmrqINjxmNLzCc=" />
     </ConfigurationSettings>
   </Role>
   <Role name="HosIncommingService">
