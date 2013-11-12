@@ -44,23 +44,23 @@ namespace HosCommsApi.Tests.Controllers
 		//	Assert.AreEqual("value", result);
 		//}
 
-		[Test]
-		public void WorkstatePostTest()
-		{
-			// Arrange
-			var controller = new HosCommsController();
+		//[Test]
+		//public void WorkstatePostTest()
+		//{
+		//	// Arrange
+		//	var controller = new HosCommsController();
 
-			// Act
-			for (var i = 0; i < 5; i++)
-			{
-				Task<string> result = controller.WorkstatePost(1,
-					new DriverWorkStateChange { DriverId = 1, WorkStateId = WorkStates.Driving, Timestamp = DateTime.UtcNow });
+		//	// Act
+		//	for (var i = 0; i < 5; i++)
+		//	{
+		//		Task<string> result = controller.WorkstatePost(1,
+		//			new DriverWorkStateChange { DriverId = 1, WorkStateId = WorkStates.Driving, Timestamp = DateTime.UtcNow });
 
-				Assert.IsTrue(string.IsNullOrWhiteSpace(result.Result));
-			}
+		//		Assert.IsTrue(string.IsNullOrWhiteSpace(result.Result));
+		//	}
 
-			// Assert
-		}
+		//	// Assert
+		//}
 
 		//[TestMethod]
 		//public void Put()

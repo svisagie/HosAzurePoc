@@ -15,8 +15,10 @@
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=hoscloudpoc;AccountKey=aw4MIlq/WYMap1i2Tbk1SJba55UzcwfUtOvoTxyx7MAnQOnH1Hr+8p3Hk18KNQtHLYzhGLiyZTLS7noC5uBu3w==" />
       <Setting name="SqlDbConnectionString" value="Server=tcp:xc254dsbip.database.windows.net,1433;Database=HosDB;User ID=HosDB@xc254dsbip;Password=P@ssw0rd1;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />
-      <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Ll/YOkB6jzAy9YLsWZ2pDT94QFcVTwnHnX6mqaYe1Ko=" />
+      <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedSecretIssuer=owner;SharedSecretValue=mEiPrhMsF+gtEuyAHXJvt9zwNH8OiFiuAI9j0W+qzbo=" />
       <Setting name="QueuePrefetchCount" value="50" />
+      <Setting name="NumberOfReceivers" value="1" />
+      <Setting name="NumberOfSenders" value="1" />
     </ConfigurationSettings>
   </Role>
   <Role name="HosSummarisationService">
@@ -24,8 +26,10 @@
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=hoscloudpoc;AccountKey=aw4MIlq/WYMap1i2Tbk1SJba55UzcwfUtOvoTxyx7MAnQOnH1Hr+8p3Hk18KNQtHLYzhGLiyZTLS7noC5uBu3w==" />
       <Setting name="SqlDbConnectionString" value="Server=tcp:xc254dsbip.database.windows.net,1433;Database=HosDB;User ID=HosDB@xc254dsbip;Password=P@ssw0rd1;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />
-      <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Ll/YOkB6jzAy9YLsWZ2pDT94QFcVTwnHnX6mqaYe1Ko=" />
-      <Setting name="QueuePrefetchCount" value="50" />
+      <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedSecretIssuer=owner;SharedSecretValue=mEiPrhMsF+gtEuyAHXJvt9zwNH8OiFiuAI9j0W+qzbo=" />
+      <Setting name="QueuePrefetchCount" value="1" />
+      <Setting name="NumberOfReceivers" value="1" />
+      <Setting name="ProcessingDelay" value="1000" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

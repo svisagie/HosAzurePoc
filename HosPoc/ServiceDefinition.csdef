@@ -29,6 +29,8 @@
       <Setting name="SqlDbConnectionString" />
       <Setting name="HosPocQueueNamespace" />
       <Setting name="QueuePrefetchCount" />
+      <Setting name="NumberOfReceivers" />
+      <Setting name="NumberOfSenders" />
     </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="HosSummarisationService" vmsize="Small">
@@ -39,6 +41,8 @@
       <Setting name="SqlDbConnectionString" />
       <Setting name="HosPocQueueNamespace" />
       <Setting name="QueuePrefetchCount" />
+      <Setting name="NumberOfReceivers" />
+      <Setting name="ProcessingDelay" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

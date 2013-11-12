@@ -15,8 +15,10 @@
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="SqlDbConnectionString" value="Data Source=AFSTBWS091;Initial Catalog=HosDB;Persist Security Info=True;User ID=sa;Password=password;MultipleActiveResultSets=True" />
-      <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Ll/YOkB6jzAy9YLsWZ2pDT94QFcVTwnHnX6mqaYe1Ko=" />
-      <Setting name="QueuePrefetchCount" value="50" />
+      <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedSecretIssuer=owner;SharedSecretValue=mEiPrhMsF+gtEuyAHXJvt9zwNH8OiFiuAI9j0W+qzbo=" />
+      <Setting name="QueuePrefetchCount" value="1" />
+      <Setting name="NumberOfReceivers" value="1" />
+      <Setting name="NumberOfSenders" value="1" />
     </ConfigurationSettings>
   </Role>
   <Role name="HosSummarisationService">
@@ -24,8 +26,10 @@
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="SqlDbConnectionString" value="Data Source=AFSTBWS091;Initial Catalog=HosDB;Persist Security Info=True;User ID=sa;Password=password;MultipleActiveResultSets=True" />
-      <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Ll/YOkB6jzAy9YLsWZ2pDT94QFcVTwnHnX6mqaYe1Ko=" />
-      <Setting name="QueuePrefetchCount" value="50" />
+      <Setting name="HosPocQueueNamespace" value="Endpoint=sb://hospoc.servicebus.windows.net/;SharedSecretIssuer=owner;SharedSecretValue=mEiPrhMsF+gtEuyAHXJvt9zwNH8OiFiuAI9j0W+qzbo=" />
+      <Setting name="QueuePrefetchCount" value="1" />
+      <Setting name="NumberOfReceivers" value="1" />
+      <Setting name="ProcessingDelay" value="1000" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

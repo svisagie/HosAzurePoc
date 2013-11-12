@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
+using AzureSBQ;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 using Microsoft.WindowsAzure;
@@ -16,97 +17,78 @@ namespace HosIncommingService
 	{
 		// The name of your queue
 		private const string QueueName = "hosworkstateincomming";
-	    private const string SummarisationQueueName = "hosworkstatesummarisation";
+		private const string SummarisationQueueName = "hosworkstatesummarisation";
 
 		// QueueClient is thread-safe. Recommended that you cache 
 		// rather than recreating it on every request
-		QueueClient _client, _summarisationClient;
-	    private bool _run = true;
-        private HosRepository _hosRepository = new HosRepository(CloudConfigurationManager.GetSetting("SqlDbConnectionString"));
+		private AzureSBQRecevier _sbqReceiver;
+		private AzureSBQSender _sbqSender;
+		private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
+
+		private readonly HosRepository _hosRepository = new HosRepository(CloudConfigurationManager.GetSetting("SqlDbConnectionString"));
 
 		public override void Run()
 		{
 			Trace.WriteLine("Starting processing of messages");
-
-		    while (_run)
-		    {
-                BrokeredMessage brokeredMessage;
-                try
-                {
-                    brokeredMessage = _client.Receive(TimeSpan.FromSeconds(10));
-		        if (brokeredMessage == null)
-		        {
-		            continue;
-		        }
-                }
-                catch (Exception exception)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    // Process the message
-                    Trace.WriteLine("Processing Service Bus message: " + brokeredMessage.SequenceNumber);
-                    var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(brokeredMessage.GetBody<string>());
-                    if (driverWorkstate == null)
-                    {
-                        brokeredMessage.Complete();
-                        continue;
-                    }
-                    try
-                    {
-                        driverWorkstate = _hosRepository.SaveDriverWorkstate(driverWorkstate);
-                        _summarisationClient.Send(new BrokeredMessage(JsonConvert.SerializeObject(driverWorkstate)));
-                        brokeredMessage.Complete();
-                    }
-                    catch (Exception exception)
-                    {
-                        brokeredMessage.Abandon();
-                    }
-                }
-                catch (Exception exception)
-                {
-                    brokeredMessage.DeadLetter();
-                }
-		    }
+			_sbqReceiver.StartRecevier();
+			_manualResetEvent.WaitOne();
 		}
 
 		public override bool OnStart()
 		{
-            if (!RoleEnvironment.IsAvailable || RoleEnvironment.IsEmulated)
-            {
-                ServiceBusEnvironment.SystemConnectivity.Mode = ConnectivityMode.Http;
-            }
+			if (!RoleEnvironment.IsAvailable || RoleEnvironment.IsEmulated)
+			{
+				ServiceBusEnvironment.SystemConnectivity.Mode = ConnectivityMode.Http;
+			}
 
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;
 
 			// Create the queue if it does not exist already
-			string connectionString = CloudConfigurationManager.GetSetting("HosPocQueueNamespace");
-			var namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-			if (!namespaceManager.QueueExists(QueueName))
-			{
-				namespaceManager.CreateQueue(QueueName);
-			}
-            if (!namespaceManager.QueueExists(SummarisationQueueName))
-            {
-                namespaceManager.CreateQueue(SummarisationQueueName);
-            }
-
-			// Initialize the connection to Service Bus Queue
-			_client = QueueClient.CreateFromConnectionString(connectionString, QueueName);
-			_client.PrefetchCount = int.Parse(CloudConfigurationManager.GetSetting("QueuePrefetchCount"));
-            _summarisationClient = QueueClient.CreateFromConnectionString(connectionString, SummarisationQueueName);
+			var connectionString = CloudConfigurationManager.GetSetting("HosPocQueueNamespace");
+			_sbqSender = new AzureSBQSender(connectionString, SummarisationQueueName, int.Parse(CloudConfigurationManager.GetSetting("NumberOfSenders")));
+			_sbqReceiver = new AzureSBQRecevier(connectionString, QueueName, int.Parse(CloudConfigurationManager.GetSetting("NumberOfReceivers")), int.Parse(CloudConfigurationManager.GetSetting("QueuePrefetchCount")));
+			_sbqReceiver.OnMessageRecevied += sbqReceiver_OnMessageRecevied;
 			return base.OnStart();
+		}
+
+		void sbqReceiver_OnMessageRecevied(BrokeredMessage brokeredMessage)
+		{
+			try
+			{
+				// Process the message
+				Trace.WriteLine("Processing Service Bus message: " + brokeredMessage.SequenceNumber);
+				var driverWorkstate = JsonConvert.DeserializeObject<DriverWorkstate>(brokeredMessage.GetBody<string>());
+				if (driverWorkstate == null)
+				{
+					brokeredMessage.Complete();
+					return;
+				}
+				try
+				{
+					driverWorkstate = _hosRepository.SaveDriverWorkstate(driverWorkstate);
+					_sbqSender.Send(new BrokeredMessage(JsonConvert.SerializeObject(driverWorkstate)));
+					brokeredMessage.Complete();
+				}
+				catch
+				{
+					brokeredMessage.Abandon();
+				}
+			}
+			catch
+			{
+				brokeredMessage.DeadLetter();
+			}
+
 		}
 
 		public override void OnStop()
 		{
-		    _run = false;
 			// Close the connection to Service Bus Queue
-			_client.Close();
-            _summarisationClient.Close();
+			_sbqReceiver.StopRecevier();
+			_sbqReceiver.Dispose();
+			_sbqSender.Dispose();
+			_manualResetEvent.Set();
 			base.OnStop();
 		}
 	}

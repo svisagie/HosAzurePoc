@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Microsoft.ServiceBus;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -25,6 +26,7 @@ namespace LoadTestClient
 		private static readonly object DurationLock = new object();
 		private static readonly Stopwatch Stopwatch = new Stopwatch();
 		private static string _baseUrl;
+		private int _sendMessageCount;
 
 		public DriverHosLoadTestPoster(int numberOfThreads, string baseUrl)
 		{
@@ -65,13 +67,31 @@ namespace LoadTestClient
 
 		private void DoContinuousPost(int i)
 		{
-			var client = new RestClient(_baseUrl);
+			PostDirectToQueue();
+			//var restSharpClients = new RestClient[_numberOfThreads];
+			//for (var j = 0; j < _numberOfThreads; j++)
+			//{
+			//	restSharpClients[j] = new RestClient(_baseUrl);
+			//}
+
+			//while (!_stopping)
+			//{
+			//	var senderIndex = Math.Abs(_sendMessageCount++ % _numberOfThreads);
+
+			//	var randomWorkStateChange = DriverWorkStateChange.GetRandomWorkStateChange();
+			//	PostUsingHttpClient(randomWorkStateChange);
+			//	//PostUsingHttpWebRequest(randomWorkStateChange);
+			//	//PostUsingRestSharp(randomWorkStateChange, restSharpClients[senderIndex]);
+			//}
+		}
+
+		private void PostDirectToQueue()
+		{
+			var sbq = new AzureSBQ.AzureSBQSender("Endpoint=sb://hospoc.servicebus.windows.net/;SharedSecretIssuer=owner;SharedSecretValue=mEiPrhMsF+gtEuyAHXJvt9zwNH8OiFiuAI9j0W+qzbo=", "hosworkstateincomming", _numberOfThreads);
 			while (!_stopping)
 			{
 				var randomWorkStateChange = DriverWorkStateChange.GetRandomWorkStateChange();
-				//PostUsingHttpClient(randomWorkStateChange);
-				//PostUsingHttpWebRequest(randomWorkStateChange);
-				PostUsingRestSharp(randomWorkStateChange, client);
+				sbq.SendMessage(randomWorkStateChange);
 			}
 		}
 
@@ -83,11 +103,11 @@ namespace LoadTestClient
 				try
 				{
 					var x = await client.PostAsJsonAsync(uri.ToString(), randomWorkStateChange);
-
+					Trace.WriteLine(x);
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine(ex.InnerException.Message);
+					Console.WriteLine("{0} /n {1}", ex.Message, ex.InnerException.Message);
 				}
 				_count++;
 			}

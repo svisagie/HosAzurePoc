@@ -85,6 +85,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ServiceBusQueues\AzureSBQ\AzureSBQ.csproj">
+      <Project>{326F9760-C82D-4D41-AC18-ED684BA8BFBA}</Project>
+      <Name>AzureSBQ</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SqlRepository\SqlRepository.csproj">
       <Project>{771eaf5f-98cb-4802-877f-bbb531c7c307}</Project>
       <Name>SqlRepository</Name>
